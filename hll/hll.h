@@ -7,25 +7,19 @@
 extern "C" {
 #endif
 
-struct hll;
+struct hll_s;
 
-typedef struct hll hll_t;
+typedef struct hll_s hll_t;
 
-struct hll_result {
-    int dummy;
-};
+void hll_init_lib();
 
-typedef struct hll_result hll_result_t;
-
-hll_t *hll_create();
+hll_t *hll_create(size_t bucket_bits);
 
 void hll_release(hll_t *hll);
 
-void hll_add(const hll_t *hll, unsigned char *data, size_t data_len);
+void hll_add(const hll_t *hll, const char *data, size_t data_len);
 
-hll_result_t *hll_result_get(const hll_t *hll);
-
-void hll_result_release(hll_result_t *hll_result);
+size_t hll_get_estimate(const hll_t *hll);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,10 @@
 CMakeCache.txt
 CMakeFiles
 Makefile
-cmake_install.cmake
+Testing
+hll_demo
+test_*
+*.cmake
 *.so
+*.a
 
