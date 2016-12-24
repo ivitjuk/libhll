@@ -4,7 +4,6 @@
  * Usage:
  *
  * cat /usr/share/dict/words | ./hll_demo $(wc -l < /usr/share/dict/words)
- *
  */
 
 #define _GNU_SOURCE
