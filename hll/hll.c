@@ -8,11 +8,12 @@
 #include <string.h>
 #include <math.h>
 
-#define NDEBUG
-
 #define HLL_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-#ifdef DEBUG
+#undef dprintf
+#undef DEBUG_PRINTF
+
+#ifdef DEBUG_PRINTF
 #define dprintf(...) printf(__VA_ARGS__)
 #else
 #define dprintf(...)
@@ -60,9 +61,9 @@ hll_t *hll_create(size_t bucket_bits)
             hll->alpha = 0.709;
             break;
         default:
-            hll->alpha = 0.7213 / (1.0 + 1.079 / hll->n_buckets);
+            hll->alpha = 0.7213 / (1.0 + 1.079 / (double)hll->n_buckets);
     }
-    
+   
 err:
     return hll;
 }
@@ -89,12 +90,26 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len)
 size_t hll_get_estimate(const hll_t *hll)
 {
     double sum = 0;
+    size_t n_empty_buckets = 0;
 
     for (size_t i = 0; i < hll->n_buckets; i++) {
         sum += 1.0 / (1 << hll->buckets[i]);
+        if (hll->buckets[i] == 0) {
+            n_empty_buckets++;
+        }
     }
 
-    return hll->alpha * hll->n_buckets * hll->n_buckets / sum;
+    double estimate = hll->alpha * hll->n_buckets * hll->n_buckets / sum;
+
+    if (estimate < hll->n_buckets * 5.0 / 2.0) {
+        // small range correction
+        estimate = -(double)hll->n_buckets * log((double)n_empty_buckets / (double)hll->n_buckets);
+    } else if (estimate > (1UL << 32) / 30) {
+        // large range correction
+        estimate = -(double)(1UL << 32) * log(1.0 - (double)estimate / (double)(1UL << 32));
+    }
+
+    return estimate;
 }
 
 uint8_t _hll_count_leading_zeros(uint64_t hash)
