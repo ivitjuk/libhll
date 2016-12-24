@@ -36,5 +36,7 @@ int main(int argc, const char *argv[])
         }
     }
 
+    hll_release(hll);
+
     return ret;
 }
