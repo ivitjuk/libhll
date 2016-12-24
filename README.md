@@ -17,6 +17,17 @@ For details see [hll.h](https://github.com/ivitjuk/libhll/blob/master/hll/hll.h)
 * `hll_add()` - Add a sample to the HLL estimator
 * `hll_get_estimate()` - Get the estimated cardinality based on the data added to the estimator
 
+# Build
+
+```
+git clone https://github.com/ivitjuk/libhll.git
+cd libhll
+cmake .
+make
+make test
+cat /usr/share/dict/words | ./hll_demo $(wc -l < /usr/share/dict/words)
+```
+
 # Example
 
 For a full example see [hll_demo.c](https://github.com/ivitjuk/libhll/blob/master/hll_demo.c).
