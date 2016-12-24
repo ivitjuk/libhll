@@ -25,8 +25,6 @@ int main(int argc, const char *argv[])
         exact_number = strtoul(argv[1], 0, 10);
     }
 
-    hll_init_lib();
-
     hll_t *hll[N_ESTIMATORS];
     
     for (int i = 0; i < N_ESTIMATORS; i++) {

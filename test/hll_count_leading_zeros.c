@@ -8,7 +8,7 @@ int main(int argc, const char *argv[])
 {
     int ret = 0;
 
-    hll_init_lib();
+    _hll_init_leading_zeros_table();
     for(int i = 0; i < 64; i++) {
         const uint64_t val = 1lu << i;
         const size_t nzeros = _hll_count_leading_zeros(val);

@@ -21,13 +21,12 @@
 
 static uint8_t _leading_zeros_table[256];
 
-void hll_init_lib()
-{
-    _hll_init_leading_zeros_table();
-}
-
 hll_t *hll_create(size_t bucket_bits)
 {
+    if (_leading_zeros_table[0] == 0) {
+        _hll_init_leading_zeros_table();
+    }
+    
     hll_t *hll = 0;
 
     if (bucket_bits < 4 || bucket_bits > 16) {
@@ -36,9 +35,7 @@ hll_t *hll_create(size_t bucket_bits)
 
     const size_t n_buckets = 1 << bucket_bits;
 
-    const size_t space_needed = 
-        sizeof(hll_t) + 
-        sizeof(uint8_t) * n_buckets;
+    const size_t space_needed = sizeof(hll_t) + sizeof(uint8_t) * n_buckets;
 
     hll = (hll_t *)malloc(space_needed);
     if (!hll) {
@@ -89,6 +86,10 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len)
 
 size_t hll_get_estimate(const hll_t *hll)
 {
+    if (!hll) {
+        return 0;
+    }
+
     double sum = 0;
     size_t n_empty_buckets = 0;
 

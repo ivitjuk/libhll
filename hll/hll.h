@@ -11,8 +11,6 @@ struct hll_s;
 
 typedef struct hll_s hll_t;
 
-void hll_init_lib();
-
 hll_t *hll_create(size_t bucket_bits);
 
 void hll_release(hll_t *hll);

@@ -9,7 +9,6 @@ int main(int argc, const char *argv[])
 {
     int ret = 0;
 
-    hll_init_lib();
     hll_t *hll = hll_create(4);
     
     uint8_t test_buckets[1 << 4] = { 0 };
