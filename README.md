@@ -10,14 +10,16 @@ More documentation on the estimator can be found by following the links:
 
 # API
 
-For details see hll.h file.
+For details see [hll.h](https://github.com/ivitjuk/libhll/blob/master/hll/hll.h).
 
 * `hll_create()` - Create HLL data structure
-* `hll_releas()` - Release HLL type previously allocated with hll_create()
+* `hll_release()` - Release HLL type previously allocated with hll_create()
 * `hll_add()` - Add a sample to the HLL estimator
 * `hll_get_estimate()` - Get the estimated cardinality based on the data added to the estimator
 
 # Example
+
+For a full example see [hll_demo.c](https://github.com/ivitjuk/libhll/blob/master/hll_demo.c).
 
 ```
 hll_t hll;
