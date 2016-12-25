@@ -29,7 +29,7 @@
 #define HLL_MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #undef dprintf
-#undef DEBUG_PRINTF
+#define DEBUG_PRINTF
 
 #ifdef DEBUG_PRINTF
 #define dprintf(...) printf(__VA_ARGS__)
@@ -52,7 +52,6 @@ hll_t *hll_create(size_t bucket_bits)
     }
 
     const size_t n_buckets = 1 << bucket_bits;
-
     const size_t space_needed = sizeof(hll_t) + sizeof(uint8_t) * n_buckets;
 
     hll = (hll_t *)malloc(space_needed);
@@ -83,6 +82,15 @@ err:
     return hll;
 }
 
+void hll_reset(hll_t *hll)
+{
+    if (!hll) {
+        return;
+    }
+
+    memset(hll->buckets, 0, sizeof(hll->buckets[0]) * hll->n_buckets);
+}
+
 void hll_release(hll_t *hll)
 {
     free(hll);
@@ -102,33 +110,51 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len)
     dprintf("hash: %lu, bucket: %lu, nzeros+1: %d\n", hash, bucket, nzeros);
 }
 
-size_t hll_get_estimate(const hll_t *hll)
+int hll_get_estimate(const hll_t *hll, hll_estimate_t *estimate)
 {
-    if (!hll) {
+    if (!hll || !estimate) {
         return 0;
     }
 
+    memset(estimate, 0, sizeof(*estimate));
+    estimate->alpha = hll->alpha;
+    estimate->n_buckets = hll->n_buckets;
     double sum = 0;
-    size_t n_empty_buckets = 0;
 
     for (size_t i = 0; i < hll->n_buckets; i++) {
-        sum += 1.0 / (1 << hll->buckets[i]);
+        sum += 1.0 / (double)(1UL << hll->buckets[i]);
         if (hll->buckets[i] == 0) {
-            n_empty_buckets++;
+            estimate->n_empty_buckets++;
         }
     }
 
-    double estimate = hll->alpha * hll->n_buckets * hll->n_buckets / sum;
+    printf("sum: %.10e\n", sum);
+    estimate->hll_estimate = hll->alpha * hll->n_buckets * hll->n_buckets / sum;
+    estimate->estimate = estimate->hll_estimate;
 
-    if (estimate < hll->n_buckets * 5.0 / 2.0) {
-        // small range correction
-        estimate = -(double)hll->n_buckets * log((double)n_empty_buckets / (double)hll->n_buckets);
-    } else if (estimate > (1UL << 32) / 30) {
-        // large range correction
-        estimate = -(double)(1UL << 32) * log(1.0 - (double)estimate / (double)(1UL << 32));
+    if (estimate->hll_estimate < hll->n_buckets * 5.0 / 2.0) {
+        dprintf("small range correction: %lu < %f (n_empty_buckets: %lu)\n", 
+                estimate->hll_estimate, hll->n_buckets * 5.0 / 2.0, estimate->n_empty_buckets);
+
+        estimate->small_range_estimate = -(double)hll->n_buckets * log((double)estimate->n_empty_buckets / (double)hll->n_buckets);
+        estimate->estimate = estimate->small_range_estimate;
+    } else if (estimate->hll_estimate > (1UL << 32) / 30) {
+        dprintf("large range correction: %lu > %lu\n", estimate->hll_estimate, (1UL << 32) / 30);
+
+        estimate->large_range_estimate = -(double)(1UL << 32) * log((double)1.0 - (double)estimate->hll_estimate / (double)(1UL << 32));
+        estimate->estimate = estimate->large_range_estimate;
     }
 
-    return estimate;
+    dprintf("esstimate: alpha=%f, n_buckets=%lu, n_empty_buckets=%lu, estimate=%lu, hll_estimate=%lu, small_range_estimate=%lu, large_range_estimate=%lu\n", 
+            estimate->alpha,
+            estimate->n_buckets,
+            estimate->n_empty_buckets,
+            estimate->estimate,
+            estimate->hll_estimate,
+            estimate->small_range_estimate,
+            estimate->large_range_estimate);
+
+    return 1;
 }
 
 uint8_t _hll_count_leading_zeros(uint64_t hash)

@@ -20,6 +20,7 @@
 #define _LIBHLL_HLL_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +34,29 @@ struct hll_s;
  */
 typedef struct hll_s hll_t;
 
+/** Estimation result data structure
+ */
+struct hll_estimate_s {
+    /** Alpha */
+    double alpha;
+    /** Number of buckets */
+    size_t n_buckets;
+    /** Number of empty buckets */
+    size_t n_empty_buckets;
+    /** Final estimated cardinality */
+    uint64_t estimate;
+    /** HLL estimated cardinaloty, before any correction */
+    uint64_t hll_estimate;
+    /** Small range estimated cardinality */
+    uint64_t small_range_estimate;
+    /** Large range estimated cardinality */
+    uint64_t large_range_estimate;
+};
+
+/** Estimation result type
+ */
+typedef struct hll_estimate_s hll_estimate_t;
+
 /** Create HLL data structure
  *
  * @param bucket_bits - Number of bits to use for the buckets.
@@ -42,6 +66,12 @@ typedef struct hll_s hll_t;
  *         or invalid bucket_bits value.
  */
 hll_t *hll_create(size_t bucket_bits);
+
+/** Reset state of the estimator
+ *
+ * @param hll - HLL data type
+ */
+void hll_reset(hll_t *hll);
 
 /** Release HLL type previously allocated with hll_create().
  *
@@ -60,9 +90,10 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len);
 /** Get the estimated cardinality based on the data added to the estimator
  * 
  * @param hll - HLL data type
- * @return Estimated cardinality or 0 if hll is NULL
+ * @param estimate - Result of the estimation
+ * @return 1 on success, 0 on failure. Fails only on NULL input parameters.
  */
-size_t hll_get_estimate(const hll_t *hll);
+int hll_get_estimate(const hll_t *hll, hll_estimate_t *estimate);
 
 #ifdef __cplusplus
 }

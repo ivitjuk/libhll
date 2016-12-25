@@ -43,7 +43,9 @@ int main(int argc, const char *argv[])
         }
     }
 
-    printf("estimate: %lu\n", hll_get_estimate(hll));
+    hll_estimate_t estimate;
+    hll_get_estimate(hll, &estimate); 
+    printf("estimate: %lu\n", estimate.estimate);
 
     for (int i = 0; i < 1 << 4; i++) {
         printf("%d zeros for bucket %d\n", hll->buckets[i], i);
