@@ -104,7 +104,7 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len)
     }
 
     // Per original paper, we need 32bits;
-    const uint32_t hash = hll->hash_function(data, data_len) % (1UL << 32); 
+    const uint32_t hash = hll->hash_function(data, data_len) & 0xFFFFFFFF;
     const size_t bucket = hash & (hll->n_buckets - 1);
     const uint8_t nzeros = _hll_count_leading_zeros(hash | (hll->n_buckets - 1)) + 1;
     hll->buckets[bucket] = HLL_MAX(hll->buckets[bucket], nzeros);

@@ -72,7 +72,7 @@ int main(int argc, const char *argv[])
             }
         }
         
-        printf("estimate with %2d buckets: %6lu, error: %5.2f%%\n", i+4, estimate.estimate, error);
+        printf("estimate with %2dbit buckets: %6lu, error: %5.2f%%\n", i+4, estimate.estimate, error);
         hll_release(hll[i]);
     }
 

@@ -60,7 +60,7 @@ typedef struct hll_estimate_s hll_estimate_t;
 /** Hash function type
  *
  * Even though hash funtion is expected to return a 64bit value,
- * this will be converted by the 32bit using the modulo operator.
+ * only 32 bits of entropy will be used.
  */
 typedef uint64_t(*hll_hash_function_t)(const char *, size_t);
 
