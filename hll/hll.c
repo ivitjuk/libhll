@@ -61,6 +61,7 @@ hll_t *hll_create(size_t bucket_bits)
 
     memset(hll, 0, space_needed);
 
+    hll_set_hash_function(hll, CityHash64);
     hll->buckets = (uint8_t *)((unsigned char *)hll + sizeof(hll_t));
     hll->n_buckets = n_buckets;
 
@@ -103,7 +104,7 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len)
     }
 
     // Per original paper, we need 32bits;
-    const uint32_t hash = CityHash64(data, data_len) % (1UL << 32); 
+    const uint32_t hash = hll->hash_function(data, data_len) % (1UL << 32); 
     const size_t bucket = hash & (hll->n_buckets - 1);
     const uint8_t nzeros = _hll_count_leading_zeros(hash | (hll->n_buckets - 1)) + 1;
     hll->buckets[bucket] = HLL_MAX(hll->buckets[bucket], nzeros);
@@ -170,6 +171,17 @@ int hll_merge(const hll_t *hll1, const hll_t *hll2)
     for (int i = 0; i < hll1->n_buckets; i++) {
         hll1->buckets[i] = HLL_MAX(hll1->buckets[i], hll2->buckets[i]);
     }
+
+    return 1;
+}
+
+int hll_set_hash_function(hll_t *hll, hll_hash_function_t hash_function)
+{
+    if (!hll || !hash_function) {
+        return 0;
+    }
+
+    hll->hash_function = hash_function;
 
     return 1;
 }

@@ -29,6 +29,7 @@ struct hll_s {
     double alpha;
     size_t n_buckets;
     uint8_t *buckets;
+    hll_hash_function_t hash_function;
 };
 
 uint8_t _hll_count_leading_zeros(uint32_t hash);

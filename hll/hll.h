@@ -57,6 +57,13 @@ struct hll_estimate_s {
  */
 typedef struct hll_estimate_s hll_estimate_t;
 
+/** Hash function type
+ *
+ * Even though hash funtion is expected to return a 64bit value,
+ * this will be converted by the 32bit using the modulo operator.
+ */
+typedef uint64_t(*hll_hash_function_t)(const char *, size_t);
+
 /** Create HLL data structure
  *
  * @param bucket_bits - Number of bits to use for the buckets.
@@ -96,6 +103,14 @@ void hll_add(const hll_t *hll, const char *data, size_t data_len);
  * @return 1 on success, 0 on failure. Fails when number of buckets are not compatible.
  */
 int hll_merge(const hll_t *hll1, const hll_t *hll2);
+
+/* Change the hash function to be used by the estimator
+ *
+ * @param hll - HLL data type
+ * @param hash_function - A pointer to the hash function (@see hll_hash_function_t)
+ * @return 1 on success, 0 on failure. Fails on NULL arguments
+ */
+int hll_set_hash_function(hll_t *hll, hll_hash_function_t hash_function);
 
 /** Get the estimated cardinality based on the data added to the estimator
  * 
