@@ -87,6 +87,16 @@ void hll_release(hll_t *hll);
  */
 void hll_add(const hll_t *hll, const char *data, size_t data_len);
 
+/** Merge data from two HLL types
+ *
+ * Data from hll2 will be merged into hll2
+ *
+ * @param hll1 - First HLL data type
+ * @param hll2 - Second HLL data type
+ * @return 1 on success, 0 on failure. Fails when number of buckets are not compatible.
+ */
+int hll_merge(const hll_t *hll1, const hll_t *hll2);
+
 /** Get the estimated cardinality based on the data added to the estimator
  * 
  * @param hll - HLL data type

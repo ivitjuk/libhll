@@ -160,6 +160,19 @@ int hll_get_estimate(const hll_t *hll, hll_estimate_t *estimate)
     return 1;
 }
 
+int hll_merge(const hll_t *hll1, const hll_t *hll2)
+{
+    if (hll1->n_buckets != hll2->n_buckets) {
+        return 0;
+    }
+
+    for (int i = 0; i < hll1->n_buckets; i++) {
+        hll1->buckets[i] = HLL_MAX(hll1->buckets[i], hll2->buckets[i]);
+    }
+
+    return 1;
+}
+
 uint8_t _hll_count_leading_zeros(uint32_t hash)
 {
     uint8_t nzeros = 0;
