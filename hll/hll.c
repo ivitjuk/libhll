@@ -118,10 +118,11 @@ int hll_get_estimate(const hll_t *hll, hll_estimate_t *estimate)
     }
 
     memset(estimate, 0, sizeof(*estimate));
+
     estimate->alpha = hll->alpha;
     estimate->n_buckets = hll->n_buckets;
-    double sum = 0;
 
+    double sum = 0;
     for (size_t i = 0; i < hll->n_buckets; i++) {
         sum += 1.0 / (double)(1UL << hll->buckets[i]);
         if (hll->buckets[i] == 0) {
