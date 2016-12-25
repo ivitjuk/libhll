@@ -23,35 +23,37 @@
 #include <stdio.h>
 #include <stdint.h>
 
+static uint64_t test_hash(const char *data, size_t hashvalue)
+{
+    return hashvalue;
+}
+
 int main(int argc, const char *argv[])
 {
     int ret = 0;
 
     hll_t *hll = hll_create(4);
+    hll_set_hash_function(hll, test_hash);
     
-    uint8_t test_buckets[1 << 4] = { 0 };
-    for (int i = 0; i < 256; i++) {
-        char d[4];
-        d[0] = d[1] = d[2] = d[3] = i;
-
-        for (int l = 1; l <= 4; l++) {
-            hll_add(hll, d, l);
-            const uint64_t hash = CityHash64(d, l);
-            const size_t bucket = hash & ((1 << 4) - 1);
-            const uint8_t nzeros = _hll_count_leading_zeros(hash) + 1;
-            test_buckets[bucket] = test_buckets[bucket] < nzeros ? nzeros : test_buckets[bucket];
-        }
-    }
-
-    hll_estimate_t estimate;
-    hll_get_estimate(hll, &estimate); 
-    printf("estimate: %lu\n", estimate.estimate);
-
-    for (int i = 0; i < 1 << 4; i++) {
-        printf("%d zeros for bucket %d\n", hll->buckets[i], i);
-        if (test_buckets[i] != hll->buckets[i]) {
-            fprintf(stderr, "%d != %d for bucket %d\n", test_buckets[i], hll->buckets[i], i);
-            ret = 1;
+    for (int bucket = 0; bucket < 16; bucket++) {
+        for (int i = 4; i < 32; i++) {
+            hll_add(hll, "  ",  (1 << i) | bucket);
+            for (int b = 0; b < hll->n_buckets; b++) {
+                /* printf("%2d:%2d; ", b, hll->buckets[b]); */
+                if (b == bucket) {
+                    if (hll->buckets[b] != 32-i) {
+                        fprintf(stderr, "failure: %d %d %d (val:%d)\n", bucket, i, b, hll->buckets[b]);
+                        ret = 1;
+                    }
+               } else {
+                    if (hll->buckets[b] != 0) {
+                        fprintf(stderr, "failure: %d %d %d (val:%d)\n", bucket, i, b, hll->buckets[b]);
+                        ret = 1;
+                    }
+                }
+            }
+            /* printf("\n"); */
+            hll_reset(hll);
         }
     }
 
