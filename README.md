@@ -6,7 +6,14 @@ This library implements the algorithm as described in the [Original Paper](http:
 
 There is the [Google](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf) improvement for the algorithm for estimating large cardinalities. It is not implemented in this library.
 
-# API
+## Features
+
+* Implements the algorithm from the original paper
+* Can use custom hash function
+* Provides merge operation
+* `hll_estimate_t` type includes internals of the estimator state
+
+## API
 
 For details see [hll.h](https://github.com/ivitjuk/libhll/blob/master/hll/hll.h).
 
@@ -17,7 +24,7 @@ For details see [hll.h](https://github.com/ivitjuk/libhll/blob/master/hll/hll.h)
 * `hll_merge()` - Merge data from two HLLs
 * `hll_set_hash_function()` - Change the hash function to be used to the estimator
 
-# Build
+## Build
 
 ```
 git clone https://github.com/ivitjuk/libhll.git
@@ -28,7 +35,7 @@ make test
 cat /usr/share/dict/words | ./hll_demo $(wc -l < /usr/share/dict/words)
 ```
 
-# Example
+## Example
 
 For a full example see [hll_demo.c](https://github.com/ivitjuk/libhll/blob/master/hll_demo.c).
 
