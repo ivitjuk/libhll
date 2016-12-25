@@ -87,7 +87,7 @@ void hll_release(hll_t *hll);
  */
 void hll_add(const hll_t *hll, const char *data, size_t data_len);
 
-/** Merge data from two HLL types
+/** Merge data from two HLLs
  *
  * Data from hll2 will be merged into hll2
  *
