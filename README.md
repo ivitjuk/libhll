@@ -15,7 +15,7 @@ For details see [hll.h](https://github.com/ivitjuk/libhll/blob/master/hll/hll.h)
 * `hll_add()` - Add a sample to the HLL estimator
 * `hll_get_estimate()` - Get the estimated cardinality based on the data added to the estimator
 * `hll_merge()` - Merge data from two HLLs
-* `hll_set_hash_function()` - Change the hash function to be used by the estimator
+* `hll_set_hash_function()` - Change the hash function to be used to the estimator
 
 # Build
 
@@ -44,7 +44,9 @@ while ((linelen = getline(&line, &buflen, stdin)) != -1) {
     hll_add(hll, line, linelen-1);
 }
 
-printf("%lu\n", hll_get_estimate(hll));
+hll_estimate_t estimate;
+hll_get_estimate(hll, estimate);
+printf("%lu\n", estimate.estimate);
 
 hll_release(hll);
 
