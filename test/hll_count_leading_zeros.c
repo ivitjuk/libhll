@@ -27,13 +27,13 @@ int main(int argc, const char *argv[])
     int ret = 0;
 
     _hll_init_leading_zeros_table();
-    for(int i = 0; i < 64; i++) {
-        const uint64_t val = 1lu << i;
+    for(int i = 0; i < 32; i++) {
+        const uint32_t val = 1lu << i;
         const size_t nzeros = _hll_count_leading_zeros(val);
-        const size_t expected = 64 - i - 1;
+        const size_t expected = 32 - i - 1;
         // printf("%lu: %lu\n", val, nzeros);
         if (nzeros != expected) {
-            fprintf(stderr, "%lu != %lu (for %lu)\n", nzeros, expected, val);
+            fprintf(stderr, "%lu != %lu (for %u)\n", nzeros, expected, val);
             ret  = 1;
         }
     }

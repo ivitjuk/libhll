@@ -61,17 +61,18 @@ int main(int argc, const char *argv[])
     double min_error = 101.0;
     for (int i = 0; i < N_ESTIMATORS; i++) {
         double error = 0.0;
-        size_t estimate = hll_get_estimate(hll[i]);
+        hll_estimate_t estimate;
+        hll_get_estimate(hll[i], &estimate);
 
         if (exact_number > 0) {
-            error = abs(exact_number - estimate) / (double)exact_number * 100.0;
+            error = abs(exact_number - estimate.estimate) / (double)exact_number * 100.0;
             if (error < min_error) {
                 best_n_buckets = i+4;
                 min_error = error;
             }
         }
         
-        printf("estimate with %2d buckets: %6lu, error: %5.2f%%\n", i+4, estimate, error);
+        printf("estimate with %2d buckets: %6lu, error: %5.2f%%\n", i+4, estimate.estimate, error);
         hll_release(hll[i]);
     }
 

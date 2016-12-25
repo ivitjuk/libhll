@@ -40,9 +40,9 @@ struct hll_estimate_s {
     /** Alpha */
     double alpha;
     /** Number of buckets */
-    size_t n_buckets;
+    uint16_t n_buckets;
     /** Number of empty buckets */
-    size_t n_empty_buckets;
+    uint16_t n_empty_buckets;
     /** Final estimated cardinality */
     uint64_t estimate;
     /** HLL estimated cardinaloty, before any correction */

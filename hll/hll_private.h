@@ -31,7 +31,7 @@ struct hll_s {
     uint8_t *buckets;
 };
 
-uint8_t _hll_count_leading_zeros(uint64_t hash);
+uint8_t _hll_count_leading_zeros(uint32_t hash);
 void _hll_init_leading_zeros_table();
 
 #ifdef __cplusplus

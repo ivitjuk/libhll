@@ -1,12 +1,10 @@
 # LibHLL - A HyperLogLog C library
 
-This is a C implementaion of the HyperLogLog cardinality estimator.
+This is a C implementation of the HyperLogLog cardinality estimator.
 
-More documentation on the estimator can be found by following the links:
+This library implements the algorithm as described in the original paper [Original Paper](http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf). More information can be found on the [Neustar Blog](https://research.neustar.biz/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/).
 
-* [Original Paper](http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf)
-* [Google Paper](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf)
-* [Neustar Blog](https://research.neustar.biz/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/)
+There is an [Google](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf) improvement for the algorithm for estimating large cardinalities. It is not implemented in this library.
 
 # API
 
