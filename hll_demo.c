@@ -77,7 +77,7 @@ int main(int argc, const char *argv[])
     }
 
     if (best_n_buckets > 0) {
-        printf("minimal error achieved with %d buckets, as %.2f%% of the exact value %lu\n", 
+        printf("minimal error achieved with %dbit buckets, as %.2f%% of the exact value %lu\n", 
                best_n_buckets, min_error, exact_number);
     }
 
